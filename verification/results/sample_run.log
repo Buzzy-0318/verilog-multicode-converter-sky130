@@ -1,0 +1,85 @@
+
+=== TEST 1: reset ===
+
+=== TEST 2: directed (hand-computed expectations) ===
+[DIRECTED] zero                   BIN2GRAY 0x0   -> 0x0   err=0  ok
+[DIRECTED] bin 0x01 gray          BIN2GRAY 0x1   -> 0x1   err=0  ok
+[DIRECTED] bin 0x02 gray          BIN2GRAY 0x2   -> 0x3   err=0  ok
+[DIRECTED] bin 0xFF gray          BIN2GRAY 0xff  -> 0x80  err=0  ok
+[DIRECTED] bin 0x80 gray          BIN2GRAY 0x80  -> 0xc0  err=0  ok
+[DIRECTED] gray 0x80 bin          GRAY2BIN 0x80  -> 0xff  err=0  ok
+[DIRECTED] gray 0x0C bin          GRAY2BIN 0xc   -> 0x8   err=0  ok
+[DIRECTED] bin 0 bcd              BIN2BCD  0x0   -> 0x0   err=0  ok
+[DIRECTED] bin 9 bcd              BIN2BCD  0x9   -> 0x9   err=0  ok
+[DIRECTED] bin 10 bcd             BIN2BCD  0xa   -> 0x10  err=0  ok
+[DIRECTED] bin 99 bcd             BIN2BCD  0x63  -> 0x99  err=0  ok
+[DIRECTED] bin 100 bcd            BIN2BCD  0x64  -> 0x100 err=0  ok
+[DIRECTED] bin 255 bcd            BIN2BCD  0xff  -> 0x255 err=0  ok
+[DIRECTED] bcd 255 bin            BCD2BIN  0x255 -> 0xff  err=0  ok
+[DIRECTED] bcd 128 bin            BCD2BIN  0x128 -> 0x80  err=0  ok
+[DIRECTED] bcd 000 bin            BCD2BIN  0x0   -> 0x0   err=0  ok
+[DIRECTED] bin 0 ex3              BIN2EX3  0x0   -> 0x333 err=0  ok
+[DIRECTED] bin 255 ex3            BIN2EX3  0xff  -> 0x588 err=0  ok
+[DIRECTED] bin 100 ex3            BIN2EX3  0x64  -> 0x433 err=0  ok
+[DIRECTED] ex3 588 bin            EX32BIN  0x588 -> 0xff  err=0  ok
+[DIRECTED] ex3 333 bin            EX32BIN  0x333 -> 0x0   err=0  ok
+[DIRECTED] ex3 456 bin            EX32BIN  0x456 -> 0x7b  err=0  ok
+
+=== TEST 3: error cases ===
+[DIRECTED] bcd digit A            BCD2BIN  0xa0  -> 0x0   err=1  ok
+[DIRECTED] bcd digit F low        BCD2BIN  0xf   -> 0x0   err=1  ok
+[DIRECTED] bcd 256 overflow       BCD2BIN  0x256 -> 0x0   err=1  ok
+[DIRECTED] bcd 999 overflow       BCD2BIN  0x999 -> 0x0   err=1  ok
+[DIRECTED] ex3 digit 2            EX32BIN  0x332 -> 0x0   err=1  ok
+[DIRECTED] ex3 digit D            EX32BIN  0xd33 -> 0x0   err=1  ok
+[DIRECTED] ex3 256 overflow       EX32BIN  0x589 -> 0x0   err=1  ok
+[DIRECTED] ex3 999 overflow       EX32BIN  0xccc -> 0x0   err=1  ok
+[DIRECTED] bin upper bits         BIN2GRAY 0x100 -> 0x0   err=1  ok
+[DIRECTED] gray upper bits        GRAY2BIN 0x800 -> 0x0   err=1  ok
+[DIRECTED] bin2bcd upper bits     BIN2BCD  0x123 -> 0x0   err=1  ok
+[DIRECTED] bin2ex3 upper bits     BIN2EX3  0xf00 -> 0x0   err=1  ok
+[DIRECTED] reserved mode 6        RESERVED 0x12  -> 0x0   err=1  ok
+[DIRECTED] reserved mode 7        RESERVED 0xff  -> 0x0   err=1  ok
+[DIRECTED] recover after err      BIN2BCD  0xff  -> 0x255 err=0  ok
+
+=== TEST 4: exhaustive, 8 modes x 4096 inputs = 32768 conversions ===
+
+=== TEST 5: round trips for all 256 binary values ===
+
+=== TEST 6: 3000 random transactions with random gaps ===
+
+=== TEST 7: start pulse while busy is ignored ===
+
+=== TEST 7b: start held for several cycles / start during DONE ===
+
+=== TEST 8: reset in the middle of a conversion ===
+[DIRECTED] works after reset      BIN2BCD  0xf0  -> 0x240 err=0  ok
+
+------------------ FUNCTIONAL COVERAGE ------------------
+ mode       | legal-input hits | illegal-input hits
+ BIN2GRAY |          657     |         4097
+ GRAY2BIN |          644     |         4122
+ BIN2BCD  |          667     |         4104
+ BCD2BIN  |          627     |         4128
+ BIN2EX3  |          623     |         4103
+ EX32BIN  |          572     |         4176
+ RESERVED |            0     |         4405
+ RESERVED |            0     |         4430
+ BCD value>255 overflow hits : 802
+ EX3 value>255 overflow hits : 783
+ corners  zero / 0xFF / 0xAA|0x55 : 100 / 92 / 194
+ bins hit: 19 / 19  (100.0 %)
+---------------------------------------------------------
+
+================= SUMMARY =================
+ transactions accepted by DUT : 37355
+ results checked by scoreboard : 37354
+ requests aborted by reset    : 1
+ scoreboard mismatches        : 0
+ test self-check failures     : 0
+ pending (unchecked) requests : 0
+ functional coverage          : 100.0 %
+ *** TEST PASSED ***
+===========================================
+
+- ../rtl/../tb/tb_code_converter.sv:39: Verilog $finish

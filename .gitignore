@@ -1,0 +1,19 @@
+# Simulation build files
+verification/obj_dir/
+verification/obj_dir_wave/
+verification/work/
+verification/simv*
+verification/sim.log
+verification/*.vcd
+verification/*.wlf
+verification/transcript
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
